@@ -1,18 +1,11 @@
 
-# CLAIR Buscador Temático
+# CLAIR WebApp
 
-Buscador Temático para el Centro de Orientación Doctrinal de Pro Ecclesia Sancta.
-
-## Tecnologías
-- Python 3
-- FastAPI
-- Uvicorn
-- Pandas
-- OpenPyXL
+Versión web del Buscador Temático para el Centro de Orientación Doctrinal.
 
 ## Cómo correr localmente
 
 ```bash
 pip install -r requirements.txt
-uvicorn main:app --reload
+uvicorn main:app --host 0.0.0.0 --port 10000
 ```
