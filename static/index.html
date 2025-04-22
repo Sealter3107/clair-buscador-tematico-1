@@ -1,0 +1,107 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Buscador Temático</title>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <style>
+        body { font-family: Montserrat, sans-serif; padding: 20px; background-color: #f4f4f4; }
+        table.dataTable thead th { background-color: #1AB5D9; color: white; font-weight: bold; }
+        .filtros { margin-bottom: 20px; }
+        .filtros input, .filtros select { margin: 5px; padding: 5px; font-family: Montserrat, sans-serif; }
+        .botonera { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+        .botonera button { padding: 6px 12px; border: none; cursor: pointer; border-radius: 4px; font-family: Montserrat, sans-serif; }
+        .buscar-btn { background-color: #1AB5D9; color: white; }
+        .reset-btn { background-color: #ccc; color: black; font-size: 0.9em; }
+    </style>
+</head>
+<body>
+    <div class="filtros">
+        <div>
+            <input id="filtro_titulo1" placeholder="Título 1">
+            <input id="filtro_titulo2" placeholder="Título 2">
+            <input id="filtro_titulo3" placeholder="Título 3">
+            <select id="logica_titulo">
+                <option value="AND">Y</option>
+                <option value="OR">O</option>
+            </select>
+        </div>
+        <div>
+            <input id="filtro_obra1" placeholder="Obra 1">
+            <input id="filtro_obra2" placeholder="Obra 2">
+            <input id="filtro_obra3" placeholder="Obra 3">
+            <select id="logica_obra">
+                <option value="AND">Y</option>
+                <option value="OR">O</option>
+            </select>
+        </div>
+        <div>
+            <input id="filtro_autor1" placeholder="Autor 1">
+            <input id="filtro_autor2" placeholder="Autor 2">
+            <input id="filtro_autor3" placeholder="Autor 3">
+            <select id="logica_autor">
+                <option value="AND">Y</option>
+                <option value="OR">O</option>
+            </select>
+        </div>
+        <div class="botonera">
+            <button class="buscar-btn" onclick="buscar()">Buscar</button>
+            <button class="reset-btn" onclick="resetear()">Resetear</button>
+        </div>
+    </div>
+    <table id="tabla" class="display" style="width:100%">
+        <thead>
+            <tr>
+                <th>Título</th>
+                <th>Obra</th>
+                <th>Autor</th>
+                <th>Tema</th>
+                <th>Etiqueta relacionada</th>
+                <th>Pág</th>
+            </tr>
+        </thead>
+    </table>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script>
+        let tabla;
+        function buscar() {
+            if (tabla) tabla.destroy();
+            tabla = $('#tabla').DataTable({
+                ajax: {
+                    url: '/buscar',
+                    data: {
+                        filtro_titulo1: $('#filtro_titulo1').val(),
+                        filtro_titulo2: $('#filtro_titulo2').val(),
+                        filtro_titulo3: $('#filtro_titulo3').val(),
+                        filtro_obra1: $('#filtro_obra1').val(),
+                        filtro_obra2: $('#filtro_obra2').val(),
+                        filtro_obra3: $('#filtro_obra3').val(),
+                        filtro_autor1: $('#filtro_autor1').val(),
+                        filtro_autor2: $('#filtro_autor2').val(),
+                        filtro_autor3: $('#filtro_autor3').val(),
+                        logica_titulo: $('#logica_titulo').val(),
+                        logica_obra: $('#logica_obra').val(),
+                        logica_autor: $('#logica_autor').val(),
+                    }
+                },
+                serverSide: true,
+                processing: true,
+                pageLength: 25,
+                lengthMenu: [10, 25, 50, 100],
+            });
+        }
+
+        function resetear() {
+            $('input').val('');
+            buscar();
+        }
+
+        $(document).ready(function () {
+            buscar();
+        });
+    </script>
+</body>
+</html>
