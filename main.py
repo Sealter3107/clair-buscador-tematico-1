@@ -20,7 +20,7 @@ df = pd.read_excel("data_fixed.xlsx")
 
 @app.get("/", response_class=HTMLResponse)
 async def read_index():
-    with open("index.html", encoding="utf-8") as f:
+    with open("static/index.html", encoding="utf-8") as f:
         return f.read()
 
 @app.get("/buscar")
