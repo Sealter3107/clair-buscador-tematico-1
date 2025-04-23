@@ -1,0 +1,95 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>CLAIR</title>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <style>
+        body {
+            font-family: Montserrat, sans-serif;
+        }
+        thead {
+            background-color: #1AB5D9;
+            color: white;
+        }
+        .filter-group {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h2>CLAIR Buscador Temático</h2>
+
+    <div class="filter-group" id="filters">
+        <input type="text" placeholder="Título contiene..." id="titulo1">
+        <input type="text" placeholder="Título contiene..." id="titulo2">
+        <input type="text" placeholder="Título contiene..." id="titulo3">
+        <select id="tituloCond"><option value="AND">Y</option><option value="OR">O</option></select>
+
+        <input type="text" placeholder="Obra contiene..." id="obra1">
+        <input type="text" placeholder="Obra contiene..." id="obra2">
+        <input type="text" placeholder="Obra contiene..." id="obra3">
+        <select id="obraCond"><option value="AND">Y</option><option value="OR">O</option></select>
+
+        <input type="text" placeholder="Autor contiene..." id="autor1">
+        <input type="text" placeholder="Autor contiene..." id="autor2">
+        <input type="text" placeholder="Autor contiene..." id="autor3">
+        <select id="autorCond"><option value="AND">Y</option><option value="OR">O</option></select>
+
+        <button onclick="buscar()">🔍 Buscar</button>
+        <button onclick="location.reload()">❌ Limpiar</button>
+    </div>
+
+    <table id="tabla" class="display" style="width:100%">
+        <thead>
+            <tr>
+                <th>Título</th>
+                <th>Obra</th>
+                <th>Autor</th>
+                <th>Editorial</th>
+                <th>Pág.</th>
+                <th>Tema</th>
+            </tr>
+        </thead>
+    </table>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script>
+        function buscar() {
+            const params = {
+                titulo: [titulo1.value, titulo2.value, titulo3.value],
+                tituloCond: tituloCond.value,
+                obra: [obra1.value, obra2.value, obra3.value],
+                obraCond: obraCond.value,
+                autor: [autor1.value, autor2.value, autor3.value],
+                autorCond: autorCond.value
+            };
+
+            $('#tabla').DataTable().destroy();
+            $('#tabla').DataTable({
+                ajax: {
+                    url: '/buscar',
+                    data: params,
+                    dataSrc: ''
+                },
+                columns: [
+                    { data: 'Título' },
+                    { data: 'Obra' },
+                    { data: 'Autor' },
+                    { data: 'Editorial' },
+                    { data: 'Pág.' },
+                    { data: 'Tema' }
+                ],
+                pageLength: 10,
+                lengthMenu: [10, 25, 50]
+            });
+        }
+
+        $(document).ready(() => buscar());
+    </script>
+</body>
+</html>
