@@ -4,58 +4,89 @@
 <head>
     <meta charset="UTF-8">
     <title>Buscador Temático CLAIR</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-    <link href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;700&display=swap">
     <style>
         body {
             font-family: 'Montserrat', sans-serif;
+            background: #f9f9f9;
             padding: 20px;
-            background: #f4f4f9;
         }
-        table.dataTable {
-            border-collapse: collapse;
-            width: 100%;
-            background-color: white;
+        table.dataTable thead {
+            background-color: #cce2f4;
         }
-        th {
-            background-color: #4b6cb7;
+        #tabla_wrapper {
+            margin-top: 20px;
+        }
+        .busqueda-avanzada {
+            margin-bottom: 20px;
+        }
+        .busqueda-avanzada input, .busqueda-avanzada select {
+            margin-right: 10px;
+            padding: 5px;
+        }
+        .boton-accion {
+            background-color: #6dc5ef;
             color: white;
-        }
-        td, th {
-            padding: 10px;
-            border: 1px solid #ccc;
+            border: none;
+            padding: 6px 12px;
+            cursor: pointer;
+            margin-right: 10px;
         }
     </style>
 </head>
 <body>
     <h1>Buscador Temático CLAIR</h1>
-    <table id="tabla" class="display">
+    <div class="busqueda-avanzada">
+        <input type="text" id="tituloFiltro" placeholder="Filtrar por título...">
+        <input type="text" id="autorFiltro" placeholder="Filtrar por autor...">
+        <input type="text" id="temaFiltro" placeholder="Filtrar por tema...">
+        <button class="boton-accion" onclick="buscar()">Buscar</button>
+        <button class="boton-accion" onclick="resetear()">Resetear</button>
+    </div>
+    <table id="tabla" class="display" style="width:100%">
         <thead>
             <tr>
                 <th>Título</th>
-                <th>Página</th>
-                <th>Obra</th>
                 <th>Autor</th>
-                <th>Carpeta</th>
                 <th>Tema</th>
+                <th>Editorial</th>
+                <th>Página</th>
             </tr>
         </thead>
     </table>
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
     <script>
-        $(document).ready(function() {
-            $('#tabla').DataTable({
-                ajax: '/buscar',
+        let tabla;
+        function buscar() {
+            tabla.ajax.reload();
+        }
+
+        function resetear() {
+            $('#tituloFiltro').val('');
+            $('#autorFiltro').val('');
+            $('#temaFiltro').val('');
+            buscar();
+        }
+
+        $(document).ready(function () {
+            tabla = $('#tabla').DataTable({
+                ajax: {
+                    url: '/buscar',
+                    dataSrc: 'data'
+                },
                 columns: [
                     { data: 0 },
                     { data: 1 },
                     { data: 2 },
                     { data: 3 },
-                    { data: 4 },
-                    { data: 5 },
-                ]
+                    { data: 4 }
+                ],
+                pageLength: 10,
+                lengthMenu: [10, 25, 50, 100]
             });
         });
     </script>
