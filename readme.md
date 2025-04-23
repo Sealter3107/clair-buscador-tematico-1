@@ -1,0 +1,1 @@
+Buscador Temático para CLAIR. Desplegar en Render usando FastAPI, Uvicorn y Pandas.
