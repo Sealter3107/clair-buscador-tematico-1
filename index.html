@@ -187,7 +187,7 @@
             getFiltros("obra").forEach(v => params.append("obra", v));
             getFiltros("autor").forEach(v => params.append("autor", v));
 
-            const res = await fetch("/buscar?" + params.toString());
+            const res = await fetch("http://127.0.0.1:8000/buscar?" + params.toString());
             const data = await res.json();
 
             document.getElementById("pagina-info").innerText = `Página ${pagina + 1} de ${Math.ceil(data.total / cantidad)}`;

@@ -1,13 +1,30 @@
 
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
-from fastapi.staticfiles import StaticFiles
+from fastapi.middleware.cors import CORSMiddleware
 import pandas as pd
-from typing import List
-import uvicorn
+import json
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 df = pd.read_excel("data_fixed.xlsx")
+
+def aplicar_filtro(columna, valores, condicion):
+    filtro = pd.Series([True] * len(df))  # por defecto no filtra nada
+    if valores:
+        if condicion == "OR":
+            filtro = df[columna].apply(lambda x: any(v.lower() in str(x).lower() for v in valores))
+        else:
+            for v in valores:
+                filtro &= df[columna].apply(lambda x: v.lower() in str(x).lower())
+    return filtro
 
 @app.get("/", response_class=HTMLResponse)
 def read_index():
@@ -17,31 +34,27 @@ def read_index():
 @app.get("/buscar")
 def buscar(request: Request):
     args = request.query_params
-    filtro = df.copy()
+    start = int(args.get("start", 0))
+    length = int(args.get("length", 10))
 
-    def aplicar_filtro(col, claves: List[str], cond):
-        claves = [k for k in claves if k.strip()]
-        if not claves or col not in df.columns:
-            return filtro
-        if cond == "AND":
-            for k in claves:
-                filtro = filtro[filtro[col].str.contains(k, case=False, na=False)]
-        else:
-            filtro = filtro[filtro[col].str.contains("|".join(claves), case=False, na=False)]
-        return filtro
+    filtro_titulo = aplicar_filtro("Títulos y subtítulos", args.getlist("titulo"), args.get("tituloCond", "AND"))
+    filtro_obra = aplicar_filtro("Obra", args.getlist("obra"), args.get("obraCond", "AND"))
+    filtro_autor = aplicar_filtro("Autor", args.getlist("autor"), args.get("autorCond", "AND"))
 
-    filtro = aplicar_filtro("Título", args.getlist("titulo"), args.get("tituloCond", "AND"))
-    filtro = aplicar_filtro("Obra", args.getlist("obra"), args.get("obraCond", "AND"))
-    filtro = aplicar_filtro("Autor", args.getlist("autor"), args.get("autorCond", "AND"))
+    df_filtrado = df[filtro_titulo & filtro_obra & filtro_autor]
 
-    resultado = []
-    for _, row in filtro.iterrows():
-        resultado.append({
-            "Título": row["Título"],
-            "Obra": row["Obra"],
-            "Autor": row["Autor"],
-            "Editorial": row["Editorial"],
-            "Pág.": f'<a href="{row["Pág."]}" target="_blank">Ver</a>' if pd.notna(row["Pág."]) else "",
-            "Tema": row["Tema"]
-        })
-    return resultado
+    data = []
+    for _, row in df_filtrado.iloc[start:start + length].iterrows():
+        data.append([
+            row["Títulos y subtítulos"],
+            row["Obra"],
+            row["Autor"],
+            row["Pág."]
+        ])
+
+    return {
+        "data": data,
+        "recordsTotal": len(df),
+        "recordsFiltered": len(df_filtrado),
+        "draw": int(args.get("draw", 1))
+    }
