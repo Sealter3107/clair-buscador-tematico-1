@@ -27,7 +27,7 @@ async def read_index():
 async def buscar(request: Request):
     draw = int(request.query_params.get("draw", 1))
     start = int(request.query_params.get("start", 0))
-    length = int(request.query_params.get("length", 10))
+    length = int(request.query_params.get("length", 20))
 
     search_value = request.query_params.get("search[value]", "").lower()
 
