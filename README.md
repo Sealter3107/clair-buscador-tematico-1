@@ -1,11 +1,11 @@
 
-# CLAIR - Buscador Temático
+# CLAIR WebApp
 
-Este proyecto despliega una tabla interactiva para búsqueda temática de libros y recursos católicos.
+Versión web del Buscador Temático para el Centro de Orientación Doctrinal.
 
-## Cómo iniciar localmente
+## Cómo correr localmente
+
 ```bash
-uvicorn main:app --reload
+pip install -r requirements.txt
+uvicorn main:app --host 0.0.0.0 --port 10000
 ```
-
-La tabla se alimenta desde `data.xlsx` y se accede desde el archivo `index.html` ubicado en `/static/`.
