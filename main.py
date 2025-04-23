@@ -1,9 +1,9 @@
 
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 import pandas as pd
-import json
 
 app = FastAPI()
 
@@ -14,47 +14,47 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-df = pd.read_excel("data_fixed.xlsx")
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
-def aplicar_filtro(columna, valores, condicion):
-    filtro = pd.Series([True] * len(df))  # por defecto no filtra nada
-    if valores:
-        if condicion == "OR":
-            filtro = df[columna].apply(lambda x: any(v.lower() in str(x).lower() for v in valores))
-        else:
-            for v in valores:
-                filtro &= df[columna].apply(lambda x: v.lower() in str(x).lower())
-    return filtro
+df = pd.read_excel("data.xlsx").fillna("")
 
 @app.get("/", response_class=HTMLResponse)
-def read_index():
-    with open("index.html", encoding="utf-8") as f:
-        return f.read()
+async def read_index():
+    with open("static/index.html", "r", encoding="utf-8") as f:
+        return HTMLResponse(content=f.read(), status_code=200)
 
 @app.get("/buscar")
-def buscar(request: Request):
-    args = request.query_params
-    start = int(args.get("start", 0))
-    length = int(args.get("length", 10))
+async def buscar(request: Request):
+    draw = int(request.query_params.get("draw", 1))
+    start = int(request.query_params.get("start", 0))
+    length = int(request.query_params.get("length", 10))
 
-    filtro_titulo = aplicar_filtro("Títulos y subtítulos", args.getlist("titulo"), args.get("tituloCond", "AND"))
-    filtro_obra = aplicar_filtro("Obra", args.getlist("obra"), args.get("obraCond", "AND"))
-    filtro_autor = aplicar_filtro("Autor", args.getlist("autor"), args.get("autorCond", "AND"))
+    search_value = request.query_params.get("search[value]", "").lower()
 
-    df_filtrado = df[filtro_titulo & filtro_obra & filtro_autor]
+    def search_filter(row):
+        return (
+            search_value in row["Títulos y subtítulos"].lower()
+            or search_value in row["Pág."].lower()
+            or search_value in row["Autor"].lower()
+        )
+
+    filtered_df = df[df.apply(search_filter, axis=1)] if search_value else df
+    total_records = len(filtered_df)
 
     data = []
-    for _, row in df_filtrado.iloc[start:start + length].iterrows():
+    for _, row in filtered_df.iloc[start:start+length].iterrows():
         data.append([
             row["Títulos y subtítulos"],
+            f'<a href="{row["link"]}" target="_blank">{row["Pág."]}</a>',
             row["Obra"],
             row["Autor"],
-            row["Pág."]
+            row["Carpeta"],
+            row["Etiquetas relacionadas"],
         ])
 
     return {
-        "data": data,
+        "draw": draw,
         "recordsTotal": len(df),
-        "recordsFiltered": len(df_filtrado),
-        "draw": int(args.get("draw", 1))
+        "recordsFiltered": total_records,
+        "data": data,
     }
