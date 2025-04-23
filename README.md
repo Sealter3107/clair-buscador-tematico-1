@@ -1,12 +1,9 @@
 # CLAIR Buscador Temático
 
-Este proyecto sirve una tabla filtrable basada en un archivo Excel con más de 160,000 entradas. Utiliza FastAPI para el backend y HTML+JS con DataTables para la vista.
+Este proyecto es un buscador temático de libros y temas católicos desarrollado con FastAPI y una tabla filtrable en HTML + JS.
 
-## Cómo ejecutar localmente
-
-```bash
-pip install -r requirements.txt
-uvicorn main:app --reload
-```
-
-Luego abre tu navegador en http://127.0.0.1:8000
+## Archivos
+- `main.py`: Backend FastAPI.
+- `static/index.html`: Interfaz web.
+- `data_fixed.xlsx`: Archivo de datos.
+- `requirements.txt`: Dependencias.

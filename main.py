@@ -17,6 +17,8 @@ app.add_middleware(
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 df = pd.read_excel("data_fixed.xlsx")
+print("🧪 Columnas del Excel:", df.columns.tolist())
+
 
 @app.get("/", response_class=HTMLResponse)
 async def read_index():
