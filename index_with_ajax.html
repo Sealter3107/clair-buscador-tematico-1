@@ -186,9 +186,14 @@
                 logica_autor: document.getElementById("logica_autor").value,
             });
 
-            getFiltros("titulo").forEach(v => params.append("titulo", v));
-            getFiltros("obra").forEach(v => params.append("obra", v));
-            getFiltros("autor").forEach(v => params.append("autor", v));
+ ["titulo", "obra", "autor"].forEach(campo => {
+        [1, 2, 3].forEach(i => {
+            const valor = document.getElementById(`${campo}${i}`).value.trim();
+            if (valor !== "") {
+                params.append(`${campo}${i}`, valor);
+            }
+        });
+    });
 
             const res = await fetch("/buscar?" + params.toString());
             const data = await res.json();
