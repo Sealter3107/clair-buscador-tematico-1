@@ -1,0 +1,115 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Buscador Temático CLAIR</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <link href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" rel="stylesheet"/>
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            padding: 20px;
+            background: #f4f4f9;
+        }
+        table.dataTable {
+            border-collapse: collapse;
+            width: 100%;
+            background-color: white;
+        }
+        th {
+            background-color: #4b6cb7;
+            color: white;
+        }
+        td, th {
+            padding: 10px;
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+    <h1>Buscador Temático CLAIR</h1>
+    <table id="tabla" class="display">
+        <thead>
+            <tr>
+                <th>Título</th>
+                <th>Página</th>
+                <th>Obra</th>
+                <th>Autor</th>
+                <th>Carpeta</th>
+                <th>Tema</th>
+            </tr>
+        </thead>
+    </table>
+
+    <script>
+        $(document).ready(function() {
+            $('#tabla').DataTable({
+                ajax: '/buscar',
+                columns: [
+                    { data: 0 },
+                    { data: 1 },
+                    { data: 2 },
+                    { data: 3 },
+                    { data: 4 },
+                    { data: 5 },
+                ]
+            });
+        });
+    </script>
+
+<script>
+$(document).ready(function () {
+    let table = $('#tabla').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: {
+            url: '/buscar',
+            data: function (d) {
+                d.titulo = [
+                    $('#filtroTitulo1').val(),
+                    $('#filtroTitulo2').val(),
+                    $('#filtroTitulo3').val()
+                ];
+                d.tituloCond = $('#logicaTitulo').val();
+
+                d.obra = [
+                    $('#filtroObra1').val(),
+                    $('#filtroObra2').val(),
+                    $('#filtroObra3').val()
+                ];
+                d.obraCond = $('#logicaObra').val();
+
+                d.autor = [
+                    $('#filtroAutor1').val(),
+                    $('#filtroAutor2').val(),
+                    $('#filtroAutor3').val()
+                ];
+                d.autorCond = $('#logicaAutor').val();
+            }
+        },
+        pageLength: 25,
+        lengthMenu: [10, 25, 50],
+        columns: [
+            { data: 'Título' },
+            { data: 'Obra' },
+            { data: 'Autor' },
+            { data: 'Pág.' }
+        ]
+    });
+
+    $('#buscar').on('click', function () {
+        table.ajax.reload();
+    });
+
+    $('#resetear').on('click', function () {
+        $('input[type="text"]').val('');
+        table.ajax.reload();
+    });
+});
+</script>
+
+</body>
+</html>
