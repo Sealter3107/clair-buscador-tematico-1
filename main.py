@@ -21,14 +21,19 @@ def read_index():
     with open("index_with_ajax.html", encoding="utf-8") as f:
         return f.read()
 
+from functools import reduce
+import operator
+
 def aplicar_filtro(columna, valores, logica):
     if not valores:
         return pd.Series([True] * len(df))
+    
     condiciones = [df[columna].astype(str).str.contains(valor, case=False, na=False) for valor in valores]
+    
     if logica == "OR":
-        return condiciones[0] if len(condiciones) == 1 else condiciones[0] | condiciones[1] | condiciones[2]
+        return reduce(operator.or_, condiciones)
     else:
-        return condiciones[0] & condiciones[1] & condiciones[2] if len(condiciones) > 2 else condiciones[0] & condiciones[1] if len(condiciones) > 1 else condiciones[0]
+        return reduce(operator.and_, condiciones)
 
 import json
 from starlette.responses import Response
