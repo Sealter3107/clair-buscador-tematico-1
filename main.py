@@ -1,8 +1,12 @@
 
 from fastapi import FastAPI, Request
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.responses import HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
 import pandas as pd
+from functools import reduce
+import operator
+import json
+from starlette.responses import Response
 
 app = FastAPI()
 
@@ -21,22 +25,11 @@ def read_index():
     with open("index_with_ajax.html", encoding="utf-8") as f:
         return f.read()
 
-from functools import reduce
-import operator
-
 def aplicar_filtro(columna, valores, logica):
     if not valores:
         return pd.Series([True] * len(df))
-    
     condiciones = [df[columna].astype(str).str.contains(valor, case=False, na=False) for valor in valores]
-    
-    if logica == "OR":
-        return reduce(operator.or_, condiciones)
-    else:
-        return reduce(operator.and_, condiciones)
-
-import json
-from starlette.responses import Response
+    return reduce(operator.or_, condiciones) if logica == "OR" else reduce(operator.and_, condiciones)
 
 @app.get("/buscar")
 def buscar(request: Request):
@@ -60,10 +53,12 @@ def buscar(request: Request):
 
     filtrado = df[f1 & f2 & f3].copy()
 
-    if "Pág." in filtrado.columns:
-        filtrado["Pág."] = filtrado["Pág."].apply(lambda x: f'<a href="{x}" target="_blank">Ver</a>' if pd.notna(x) else "")
+    if "Pág." in filtrado.columns and "link" in filtrado.columns:
+        filtrado["Pág."] = filtrado.apply(
+            lambda row: f'<a href="{row["link"]}" target="_blank">{row["Pág."]}</a>' if pd.notna(row["Pág."]) and pd.notna(row["link"]) else "",
+            axis=1
+        )
 
-    # 🔧 Limpiar datos problemáticos para JSON
     filtrado = filtrado.replace([float("inf"), float("-inf")], None)
     filtrado = filtrado.fillna("")
 
@@ -73,7 +68,6 @@ def buscar(request: Request):
     paginado = filtrado.iloc[start:start + length]
     data = paginado.to_dict(orient="records")
 
-    # ✅ Conversión segura a JSON con `allow_nan=False`
     json_data = json.dumps({
         "draw": draw,
         "recordsTotal": total,
