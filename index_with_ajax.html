@@ -2,6 +2,9 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+<script>
+    window.$ = window.jQuery = function() {}; // Para evitar errores si DataTables no está cargado
+</script>
     <meta charset="UTF-8">
     <title>Buscador Temático 2 - CLAIR</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
@@ -187,10 +190,10 @@
             getFiltros("obra").forEach(v => params.append("obra", v));
             getFiltros("autor").forEach(v => params.append("autor", v));
 
-            const res = await fetch("http://127.0.0.1:8000/buscar?" + params.toString());
+            const res = await fetch("/buscar?" + params.toString());
             const data = await res.json();
 
-            document.getElementById("pagina-info").innerText = `Página ${pagina + 1} de ${Math.ceil(data.total / cantidad)}`;
+            document.getElementById("pagina-info").innerText = `Página ${pagina + 1} de ${Math.ceil(data.recordsFiltered / cantidad)}`; 
 
             const tbody = document.querySelector("#resultados tbody");
             tbody.innerHTML = "";
@@ -231,18 +234,5 @@
 
         buscar();
     </script>
-<script>
-$(document).ready(function() {
-    var table = $("#tabla").DataTable({
-        "processing": true,
-        "serverSide": true,
-        "ajax": {
-            "url": "/buscar",
-            "type": "GET"
-        },
-        "pageLength": 25
-    });
-});
-</script>
 </body>
 </html>
