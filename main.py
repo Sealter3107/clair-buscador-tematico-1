@@ -34,6 +34,10 @@ def aplicar_filtro(columna, valores, logica):
 def buscar(request: Request):
     args = request.query_params
 
+    draw = int(args.get("draw", 1))
+    start = int(args.get("start", 0))
+    length = int(args.get("length", 10))
+
     titulo_vals = [args.get("titulo1", ""), args.get("titulo2", ""), args.get("titulo3", "")]
     obra_vals = [args.get("obra1", ""), args.get("obra2", ""), args.get("obra3", "")]
     autor_vals = [args.get("autor1", ""), args.get("autor2", ""), args.get("autor3", "")]
@@ -48,9 +52,19 @@ def buscar(request: Request):
 
     filtrado = df[f1 & f2 & f3].copy()
 
-    # Agregar hipervínculo a la columna "Pág."
+    # Hipervínculo en "Pág."
     if "Pág." in filtrado.columns:
         filtrado["Pág."] = filtrado["Pág."].apply(lambda x: f'<a href="{x}" target="_blank">Ver</a>' if pd.notna(x) else "")
 
-    data = filtrado.to_dict(orient="records")
-    return JSONResponse(content={"data": data})
+    total = len(df)
+    total_filtrado = len(filtrado)
+
+    paginado = filtrado.iloc[start:start + length]
+    data = paginado.to_dict(orient="records")
+
+    return JSONResponse(content={
+        "draw": draw,
+        "recordsTotal": total,
+        "recordsFiltered": total_filtrado,
+        "data": data
+    })
