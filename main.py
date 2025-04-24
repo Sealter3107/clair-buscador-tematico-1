@@ -52,9 +52,12 @@ def buscar(request: Request):
 
     filtrado = df[f1 & f2 & f3].copy()
 
-    # Hipervínculo en "Pág."
     if "Pág." in filtrado.columns:
         filtrado["Pág."] = filtrado["Pág."].apply(lambda x: f'<a href="{x}" target="_blank">Ver</a>' if pd.notna(x) else "")
+
+    # 🔧 Limpiar datos problemáticos para JSON
+    filtrado = filtrado.replace([float("inf"), float("-inf")], None)
+    filtrado = filtrado.fillna("")
 
     total = len(df)
     total_filtrado = len(filtrado)
@@ -67,4 +70,4 @@ def buscar(request: Request):
         "recordsTotal": total,
         "recordsFiltered": total_filtrado,
         "data": data
-    })
+    }, dumps_kwargs={"allow_nan": False})
