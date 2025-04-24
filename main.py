@@ -30,6 +30,9 @@ def aplicar_filtro(columna, valores, logica):
     else:
         return condiciones[0] & condiciones[1] & condiciones[2] if len(condiciones) > 2 else condiciones[0] & condiciones[1] if len(condiciones) > 1 else condiciones[0]
 
+import json
+from starlette.responses import Response
+
 @app.get("/buscar")
 def buscar(request: Request):
     args = request.query_params
@@ -65,9 +68,12 @@ def buscar(request: Request):
     paginado = filtrado.iloc[start:start + length]
     data = paginado.to_dict(orient="records")
 
-    return JSONResponse(content={
+    # ✅ Conversión segura a JSON con `allow_nan=False`
+    json_data = json.dumps({
         "draw": draw,
         "recordsTotal": total,
         "recordsFiltered": total_filtrado,
         "data": data
-    }, dumps_kwargs={"allow_nan": False})
+    }, allow_nan=False)
+
+    return Response(content=json_data, media_type="application/json")
