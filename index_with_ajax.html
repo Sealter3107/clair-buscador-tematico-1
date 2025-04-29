@@ -32,12 +32,12 @@
             font-weight: 600;
             margin-bottom: 5px;
         }
-        .filter-line {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-bottom: 5px;
-        }
+.filter-line {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 5px;
+}
         .filter-line input, .filter-line select {
             padding: 8px;
             font-size: 14px;
@@ -134,34 +134,38 @@
             </div>
         </div>
 
-        <div class="filter-block">
-            <div class="filter-title">Autor</div>
-<div id="autor-inputs">
-    <input type="text" id="autor1" placeholder="Filtro 1">
-    <input type="text" id="autor2" placeholder="Filtro 2" style="display:none;">
-    <input type="text" id="autor3" placeholder="Filtro 3" style="display:none;">
-    <input type="text" id="autor4" placeholder="Filtro 4" style="display:none;">
-    <input type="text" id="autor5" placeholder="Filtro 5" style="display:none;">
+<div class="filter-block">
+    <div class="filter-title">Autor</div>
+    <div class="filter-line">
+        <div id="autor-inputs">
+            <input type="text" id="autor1" placeholder="Filtro 1">
+            <input type="text" id="autor2" placeholder="Filtro 2" style="display:none;">
+            <input type="text" id="autor3" placeholder="Filtro 3" style="display:none;">
+            <input type="text" id="autor4" placeholder="Filtro 4" style="display:none;">
+            <input type="text" id="autor5" placeholder="Filtro 5" style="display:none;">
+        </div>
+        <button onclick="agregarFiltro('autor')">+</button>
+        <select id="logica_autor">
+            <option value="AND">Y (AND)</option>
+            <option value="OR">O (OR)</option>
+        </select>
+    </div>
 </div>
-<button onclick="agregarFiltro('autor')">+</button>
-<select id="logica_autor">
-                    <option value="AND">Y (AND)</option>
-                    <option value="OR">O (OR)</option>
-                </select>
-            </div>
         </div>
 
-        <div class="controls">
-            <button onclick="buscar()">Buscar</button>
-            <button class="resetear" onclick="resetear()">Resetear</button>
-            <select id="cantidad" onchange="buscar()">
-                <option value="10">10</option>
-                <option value="25" selected>25</option>
-                <option value="50">50</option>
-                <option value="100">100</option>
-                <option value="1000000">Todas</option>
-            </select>
-        </div>
+<div class="controls" style="align-self: flex-start; margin-top: 0;">
+    <div style="display: flex; flex-direction: column; gap: 10px;">
+        <button onclick="buscar()">Buscar</button>
+        <button class="resetear" onclick="resetear()">Resetear</button>
+        <select id="cantidad" onchange="buscar()">
+            <option value="10">10</option>
+            <option value="25" selected>25</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+            <option value="1000000">Todas</option>
+        </select>
+    </div>
+</div>
     </div>
 
     <table id="resultados">
