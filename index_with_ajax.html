@@ -100,10 +100,16 @@
         <div class="filter-block">
             <div class="filter-title">Título</div>
             <div class="filter-line">
-                <input type="text" id="titulo1" placeholder="Filtro 1">
-                <input type="text" id="titulo2" placeholder="Filtro 2">
-                <input type="text" id="titulo3" placeholder="Filtro 3">
-                <select id="logica_titulo">
+<div id="titulo-inputs">
+    <input type="text" id="titulo1" placeholder="Filtro 1">
+    <input type="text" id="titulo2" placeholder="Filtro 2" style="display:none;">
+    <input type="text" id="titulo3" placeholder="Filtro 3" style="display:none;">
+    <input type="text" id="titulo4" placeholder="Filtro 4" style="display:none;">
+    <input type="text" id="titulo5" placeholder="Filtro 5" style="display:none;">
+</div>
+<button onclick="agregarFiltro('titulo')">+</button>
+<select id="logica_titulo">
+
                     <option value="AND">Y (AND)</option>
                     <option value="OR">O (OR)</option>
                 </select>
@@ -113,10 +119,15 @@
         <div class="filter-block">
             <div class="filter-title">Obra</div>
             <div class="filter-line">
-                <input type="text" id="obra1" placeholder="Filtro 1">
-                <input type="text" id="obra2" placeholder="Filtro 2">
-                <input type="text" id="obra3" placeholder="Filtro 3">
-                <select id="logica_obra">
+<div id="obra-inputs">
+    <input type="text" id="obra1" placeholder="Filtro 1">
+    <input type="text" id="obra2" placeholder="Filtro 2" style="display:none;">
+    <input type="text" id="obra3" placeholder="Filtro 3" style="display:none;">
+    <input type="text" id="obra4" placeholder="Filtro 4" style="display:none;">
+    <input type="text" id="obra5" placeholder="Filtro 5" style="display:none;">
+</div>
+<button onclick="agregarFiltro('obra')">+</button>
+<select id="logica_obra">
                     <option value="AND">Y (AND)</option>
                     <option value="OR">O (OR)</option>
                 </select>
@@ -125,11 +136,15 @@
 
         <div class="filter-block">
             <div class="filter-title">Autor</div>
-            <div class="filter-line">
-                <input type="text" id="autor1" placeholder="Filtro 1">
-                <input type="text" id="autor2" placeholder="Filtro 2">
-                <input type="text" id="autor3" placeholder="Filtro 3">
-                <select id="logica_autor">
+<div id="autor-inputs">
+    <input type="text" id="autor1" placeholder="Filtro 1">
+    <input type="text" id="autor2" placeholder="Filtro 2" style="display:none;">
+    <input type="text" id="autor3" placeholder="Filtro 3" style="display:none;">
+    <input type="text" id="autor4" placeholder="Filtro 4" style="display:none;">
+    <input type="text" id="autor5" placeholder="Filtro 5" style="display:none;">
+</div>
+<button onclick="agregarFiltro('autor')">+</button>
+<select id="logica_autor">
                     <option value="AND">Y (AND)</option>
                     <option value="OR">O (OR)</option>
                 </select>
@@ -186,14 +201,14 @@
                 logica_autor: document.getElementById("logica_autor").value,
             });
 
- ["titulo", "obra", "autor"].forEach(campo => {
-        [1, 2, 3].forEach(i => {
-            const valor = document.getElementById(`${campo}${i}`).value.trim();
-            if (valor !== "") {
-                params.append(`${campo}${i}`, valor);
-            }
-        });
+["titulo", "obra", "autor"].forEach(campo => {
+    [1, 2, 3, 4, 5].forEach(i => {
+        const input = document.getElementById(`${campo}${i}`);
+        if (input && input.value.trim() !== "") {
+            params.append(`${campo}${i}`, input.value.trim());
+        }
     });
+});
 
             const res = await fetch("/buscar?" + params.toString());
             const data = await res.json();
@@ -227,17 +242,46 @@
             buscar();
         }
 
-        function resetear() {
-            ["titulo", "obra", "autor"].forEach(campo => {
-                [1, 2, 3].forEach(i => {
-                    document.getElementById(`${campo}${i}`).value = "";
-                });
-            });
-            pagina = 0;
-            buscar();
+function resetear() {
+    ["titulo", "obra", "autor"].forEach(campo => {
+        // Vaciar los valores de todos los inputs
+        for (let i = 1; i <= 5; i++) {
+            const input = document.getElementById(`${campo}${i}`);
+            if (input) {
+                input.value = "";
+                // Mostrar solo el primer input, ocultar los demás
+                input.style.display = (i === 1) ? "inline-block" : "none";
+            }
         }
 
+        // Volver a mostrar el botón (+)
+        const button = document.querySelector(`button[onclick="agregarFiltro('${campo}')"]`);
+        if (button) button.style.display = "inline-block";
+    });
+
+    pagina = 0;
+    buscar();
+}
+
         buscar();
+
+function agregarFiltro(campo) {
+    for (let i = 2; i <= 5; i++) {
+        const input = document.getElementById(`${campo}${i}`);
+        if (input && input.style.display === "none") {
+            input.style.display = "inline-block";
+
+            // Si este es el último, ocultamos el botón (+)
+            if (i === 5) {
+                const button = document.querySelector(`button[onclick="agregarFiltro('${campo}')"]`);
+                if (button) button.style.display = "none";
+            }
+            break;
+        }
+    }
+}
+
     </script>
+
 </body>
 </html>

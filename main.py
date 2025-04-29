@@ -39,9 +39,9 @@ def buscar(request: Request):
     start = int(args.get("start", 0))
     length = int(args.get("length", 10))
 
-    titulo_vals = [args.get("titulo1", ""), args.get("titulo2", ""), args.get("titulo3", "")]
-    obra_vals = [args.get("obra1", ""), args.get("obra2", ""), args.get("obra3", "")]
-    autor_vals = [args.get("autor1", ""), args.get("autor2", ""), args.get("autor3", "")]
+    titulo_vals = [args.get(f"titulo{i}", "") for i in range(1, 6)]
+    obra_vals   = [args.get(f"obra{i}", "") for i in range(1, 6)]
+    autor_vals  = [args.get(f"autor{i}", "") for i in range(1, 6)]
 
     logica_titulo = args.get("logica_titulo", "AND")
     logica_obra = args.get("logica_obra", "AND")
