@@ -19,6 +19,9 @@ app.add_middleware(
 
 # Cargar los datos
 df = pd.read_excel("data.xlsx")
+if "Pág." in df.columns:
+    df["Pág."] = df["Pág."].astype("Int64")  # <- Esto convierte a enteros pero permite valores vacíos
+
 
 @app.get("/", response_class=HTMLResponse)
 def read_index():
