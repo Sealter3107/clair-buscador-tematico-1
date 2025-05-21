@@ -225,13 +225,7 @@
                 const tr = document.createElement("tr");
                 tr.innerHTML = `
                     <td>${row["Capítulo (tema)"] || ""}</td>
-                    <td>${
-    row["link"]
-        ? `<a href="${row["link"]}" target="_blank">${
-              isNaN(row["Pág."]) ? "" : parseInt(row["Pág."])
-          }</a>`
-        : isNaN(row["Pág."]) ? "" : parseInt(row["Pág."])
-}</td>
+                    <td>${row["link"] ? `<a href="${row["link"]}" target="_blank">${row["Pág."]}</a>` : row["Pág."]}</td>
                     <td>${row["Obra"] || ""}</td>
                     <td>${row["Autor"] || ""}</td>
                     <td>${row["Carpeta"] || ""}</td>
