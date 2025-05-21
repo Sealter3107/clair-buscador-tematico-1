@@ -170,12 +170,12 @@
     <table id="resultados">
         <thead>
             <tr>
-                <th>Título</th>
+                <th>Capítulo-Tema</th>
                 <th>Pág.</th>
                 <th>Obra</th>
                 <th>Autor</th>
                 <th>Carpeta</th>
-                <th>Tema</th>
+                <th>Catálogo</th>
             </tr>
         </thead>
         <tbody></tbody>
@@ -224,12 +224,12 @@
             data.data.forEach(row => {
                 const tr = document.createElement("tr");
                 tr.innerHTML = `
-                    <td>${row["Títulos y subtítulos"] || ""}</td>
+                    <td>${row["Capítulo (tema)"] || ""}</td>
                     <td>${row["link"] ? `<a href="${row["link"]}" target="_blank">${row["Pág."]}</a>` : row["Pág."]}</td>
                     <td>${row["Obra"] || ""}</td>
                     <td>${row["Autor"] || ""}</td>
                     <td>${row["Carpeta"] || ""}</td>
-                    <td>${row["Tema"] || ""}</td>
+                    <td>${row["Catálogo"] || ""}</td>
                 `;
                 tbody.appendChild(tr);
             });

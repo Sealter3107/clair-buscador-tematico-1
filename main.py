@@ -47,7 +47,7 @@ def buscar(request: Request):
     logica_obra = args.get("logica_obra", "AND")
     logica_autor = args.get("logica_autor", "AND")
 
-    f1 = aplicar_filtro("Títulos y subtítulos", [v for v in titulo_vals if v], logica_titulo)
+    f1 = aplicar_filtro("Capítulo (tema)", [v for v in titulo_vals if v], logica_titulo)
     f2 = aplicar_filtro("Obra", [v for v in obra_vals if v], logica_obra)
     f3 = aplicar_filtro("Autor", [v for v in autor_vals if v], logica_autor)
 
